@@ -14,8 +14,13 @@
 </div>
 
 <div class="row">
-  <input class="form-control" ng-model-options="{ updateOn: 'blur' }" ng-model="searchValue" ng-change="search(searchValue)"
-  placeholder="Search movie">
+  <form ng-submit="search(searchValue)">
+    <input class="form-control"
+      ng-model-options="{ updateOn: 'blur' }"
+      ng-model="searchValue"
+      ng-change="search(searchValue)"
+      placeholder="Search movie">
+  </form>
 </div>
 
 <div class="row">

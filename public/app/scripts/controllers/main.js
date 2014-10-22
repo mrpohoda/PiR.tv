@@ -5,7 +5,7 @@ angular.module('myApp')
     $scope.foundItems = [];
     $scope.searchValue = '';
     $scope.nowPlaying;
-    var host = 'http://127.0.0.1:8080';
+    var host = document.location.origin;
 
     $scope.search = function (query) {
       var params = {

@@ -38,7 +38,7 @@
       </button>
       <button type="button"
         class="btn btn-danger"
-        ng-class="item.isPlaying ? '' : 'hide'"
+        ng-class="item.id === nowPlaying.id ? '' : 'hide'"
         ng-click="stop(item)">
         <span class="glyphicon glyphicon-stop"></span>
       </button>

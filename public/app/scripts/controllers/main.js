@@ -19,6 +19,16 @@ angular.module('myApp')
     };
 
     $scope.play = function (movie) {
+      if ($scope.nowPlaying && movie.id === $scope.nowPlaying.id) {
+        $scope.pause(movie);
+        return;
+      }
+
+      // if there is previous movie still playing, stop it
+      if ($scope.nowPlaying) {
+        $scope.stop($scope.nowPlaying);
+      }
+
       movie.isPlaying = true;
       $scope.nowPlaying = movie;
       mySocket.emit('video', {
@@ -28,7 +38,7 @@ angular.module('myApp')
     };
 
     $scope.pause = function (movie) {
-      movie.isPlaying = false;
+      movie.isPlaying = !movie.isPlaying;
       $.get(host + '/omx/pause', function (data) {
         console.log(data);
       });

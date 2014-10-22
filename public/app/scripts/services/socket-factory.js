@@ -2,7 +2,8 @@
 
 angular.module('myApp')
   .factory('mySocket', function ($rootScope) {
-    var socket = io.connect('http://localhost:8080');
+    var host = document.location.origin;
+    var socket = io.connect(host);
     return {
       on: function (eventName, callback) {
         socket.on(eventName, function () {

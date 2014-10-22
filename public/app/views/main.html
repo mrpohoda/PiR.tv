@@ -1,0 +1,52 @@
+<div ng-show="nowPlaying" class="row mb10">
+  Now playing: <strong>{{nowPlaying.title}}</strong>
+  <button type="button"
+      class="btn btn-sm"
+      ng-class="nowPlaying.isPlaying ? 'btn-success' : 'btn-primary'"
+      ng-click="nowPlaying.isPlaying ? pause(nowPlaying) : play(nowPlaying)">
+      <span class="glyphicon" ng-class="nowPlaying.isPlaying ? 'glyphicon-pause' : 'glyphicon-play-circle'"></span>
+    </button>
+    <button type="button"
+      class="btn btn-sm btn-danger"
+      ng-click="stop(nowPlaying)">
+      <span class="glyphicon glyphicon-stop"></span>
+    </button>
+</div>
+
+<div class="row">
+  <input class="form-control" ng-model-options="{ updateOn: 'blur' }" ng-model="searchValue" ng-change="search(searchValue)"
+  placeholder="Search movie">
+</div>
+
+<div class="row">
+  <div class="movie col-md-6 col-sm-12" ng-repeat="item in foundItems">
+    <img src="{{ item.preview }}" class="pull-left">
+    <div><strong>{{item.title}}</strong></div>
+    <div>{{item.duration | secondsToString}}</div>
+    <div class="clearfix"></div>
+    <div>
+      <button type="button"
+        class="btn"
+        ng-class="item.isPlaying ? 'btn-success' : 'btn-primary'"
+        ng-click="item.isPlaying ? pause(item) : play(item)">
+        <span class="glyphicon" ng-class="item.isPlaying ? 'glyphicon-pause' : 'glyphicon-play-circle'"></span>
+      </button>
+      <button type="button"
+        class="btn btn-danger"
+        ng-class="item.isPlaying ? '' : 'hide'"
+        ng-click="stop(item)">
+        <span class="glyphicon glyphicon-stop"></span>
+      </button>
+      <button type="button"
+        class="btn btn-default"
+        ng-click="addToQueue(item)">
+        <span class="glyphicon glyphicon-time"></span>
+      </button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>♥ Lenik</p>
+</div>

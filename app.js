@@ -3,7 +3,7 @@
  */
 
 var express = require('express')
-  , app = express()  
+  , app = express()
   , server = require('http').createServer(app)
   , path = require('path')
   , io = require('socket.io').listen(server)
@@ -18,7 +18,7 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public/dist')));
 app.use(omx());
 
 // development only
@@ -32,7 +32,8 @@ app.get('/', function (req, res) {
 });
 
 app.get('/remote', function (req, res) {
-  res.sendfile(__dirname + '/public/remote.html');
+  // res.sendfile(__dirname + '/public/remote.html');
+  res.sendfile(__dirname + '/public/dist/index.html');
 });
 
 app.get('/play/:video_id', function (req, res) {
@@ -72,7 +73,7 @@ io.sockets.on('connection', function (socket) {
  });
 
  socket.on("controll", function(data){
-	console.log(data);
+  console.log(data);
    if(socket.type === "remote"){
 
      if(data.action === "tap"){

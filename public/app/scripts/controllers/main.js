@@ -10,7 +10,7 @@ angular.module('myApp')
     $scope.search = function (query) {
       var params = {
         query: query,
-        limit: 12
+        limit: 30
       };
       youtube.getMovies(params).then(function (movies) {
         $scope.foundItems = movies.data;

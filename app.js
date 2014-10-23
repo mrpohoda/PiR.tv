@@ -9,7 +9,8 @@ var express = require('express'),
   fs = require('fs'),
   io = require('socket.io').listen(server),
   spawn = require('child_process').spawn,
-  omx = require('./public/js/omxcontrol.js');
+  omx = require('./public/js/omxcontrol.js'),
+  Firebase = require("firebase");
 
 
 
@@ -21,6 +22,8 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public/dist')));
 app.use(omx());
+
+var firebaseRef = new Firebase("https://pirtv.firebaseio.com/");
 
 // development only
 if ('development' == app.get('env')) {
@@ -35,6 +38,17 @@ app.get('/', function(req, res) {
 app.get('/remote', function(req, res) {
   // res.sendfile(__dirname + '/public/remote.html');
   res.sendfile(__dirname + '/public/dist/index.html');
+});
+
+app.get('/video/favourite', function(req, res) {
+  firebaseRef.child('favourites').on('value', function (data) {
+    var movies = data.val(),
+      response = [];
+    Object.keys(movies).forEach(function (id) {
+      response.push(movies[id]);
+    });
+    res.json(response);
+  })
 });
 
 app.get('/play/:video_id', function(req, res) {
@@ -136,6 +150,14 @@ io.sockets.on('connection', function(socket) {
           download_file(id, fileName, url);
         }
       });
+    }
+    else if (data.action === 'favourite' && data.video) {
+      var favouritesRef = firebaseRef.child("favourites");
+      var video = data.video;
+      // this $$hashKey is added by Angular and will be resolved when switching from socket.io
+      // to some Angular version of lib - it's because of JSON.stringify
+      delete video.$$hashKey;
+      favouritesRef.child(video.id).set(video);
     }
 
   });

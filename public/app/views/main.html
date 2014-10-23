@@ -1,16 +1,24 @@
 <div ng-show="nowPlaying" class="row mb10">
-  Now playing: <strong>{{nowPlaying.title}}</strong>
-  <button type="button"
-      class="btn btn-sm"
-      ng-class="nowPlaying.isPlaying ? 'btn-success' : 'btn-primary'"
-      ng-click="nowPlaying.isPlaying ? pause(nowPlaying) : play(nowPlaying)">
-      <span class="glyphicon" ng-class="nowPlaying.isPlaying ? 'glyphicon-pause' : 'glyphicon-play-circle'"></span>
-    </button>
+  Now playing:
+  <div>
+    <strong>{{nowPlaying.title}}</strong>
     <button type="button"
-      class="btn btn-sm btn-danger"
-      ng-click="stop(nowPlaying)">
-      <span class="glyphicon glyphicon-stop"></span>
-    </button>
+        class="btn btn-sm"
+        ng-class="nowPlaying.isPlaying ? 'btn-success' : 'btn-primary'"
+        ng-click="nowPlaying.isPlaying ? pause(nowPlaying) : play(nowPlaying)">
+        <span class="glyphicon" ng-class="nowPlaying.isPlaying ? 'glyphicon-pause' : 'glyphicon-play-circle'"></span>
+      </button>
+      <button type="button"
+        class="btn btn-sm btn-danger"
+        ng-click="stop(nowPlaying)">
+        <span class="glyphicon glyphicon-stop"></span>
+      </button>
+      <button type="button"
+        class="btn btn-sm btn-info"
+        ng-click="addFavourite(nowPlaying)">
+        <span class="glyphicon glyphicon-star-empty"></span>
+      </button>
+    </div>
 </div>
 
 <div class="row">
@@ -47,9 +55,18 @@
         ng-click="addToQueue(item)">
         <span class="glyphicon glyphicon-time"></span>
       </button>
+      <button type="button"
+        class="btn btn-info"
+        ng-click="addFavourite(item)">
+        <span class="glyphicon glyphicon-star-empty"></span>
+      </button>
     </div>
     <div class="clearfix"></div>
   </div>
+</div>
+
+<div class="favourite">
+  <button ng-click="showFavourites()" class="btn btn-primary">Show favourites</button>
 </div>
 
 <div class="footer">

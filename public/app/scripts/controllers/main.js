@@ -52,6 +52,21 @@ angular.module('myApp')
       });
     };
 
+    $scope.showFavourites = function () {
+      $.get(host + '/video/favourite', function (data) {
+        $scope.$apply(function () {
+          $scope.foundItems = data;
+        });
+      });
+    };
+
+    $scope.addFavourite = function (movie) {
+      mySocket.emit('video', {
+        action: 'favourite',
+        video: movie
+      });
+    };
+
     // Socket listeners
     // ================
     mySocket.on('loading', function (data) {

@@ -58,6 +58,10 @@ angular.module('myApp')
       console.log('loading', data);
     });
 
+    mySocket.on('finish', function (data) {
+      $scope.nowPlaying.isPlaying = false;
+    });
+
     mySocket.on('send:message', function (message) {
       $scope.messages.push(message);
     });

@@ -60,6 +60,7 @@ angular.module('myApp')
 
     mySocket.on('finish', function (data) {
       $scope.nowPlaying.isPlaying = false;
+      $scope.nowPlaying = null;
     });
 
     mySocket.on('send:message', function (message) {

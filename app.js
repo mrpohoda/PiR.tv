@@ -6,6 +6,7 @@ var express = require('express'),
   app = express(),
   server = require('http').createServer(app),
   path = require('path'),
+  fs = require('fs'),
   io = require('socket.io').listen(server),
   spawn = require('child_process').spawn,
   omx = require('./public/js/omxcontrol.js');
@@ -100,26 +101,41 @@ io.sockets.on('connection', function(socket) {
     }
   });
 
+  function play_file(fileName) {
+    omx.start(fileName, function () {
+      socket.emit("finish");
+    });
+  }
+
+  function download_file(id, fileName, url) {
+    var runShell = new run_shell('youtube-dl', ['-o', fileName, '-f', '/18/22', url],
+      function(me, buffer) {
+        me.stdout += buffer.toString();
+        socket.emit("loading", {
+          output: me.stdout
+        });
+        console.log(me.stdout);
+      },
+      function() {
+        //child = spawn('omxplayer',[id+'.mp4']);
+        play_file(fileName);
+      });
+  }
+
   socket.on("video", function(data) {
 
     if (data.action === "play") {
       var id = data.video_id,
+        fileName = 'video/' + id + '.mp4', // 'video/%(id)s.%(ext)s'
         url = "http://www.youtube.com/watch?v=" + id;
 
-      var runShell = new run_shell('youtube-dl', ['-o', '%(id)s.%(ext)s', '-f', '/18/22', url],
-        function(me, buffer) {
-          me.stdout += buffer.toString();
-          socket.emit("loading", {
-            output: me.stdout
-          });
-          console.log(me.stdout);
-        },
-        function() {
-          //child = spawn('omxplayer',[id+'.mp4']);
-          omx.start(id + '.mp4', function () {
-            socket.emit("finish");
-          });
-        });
+      fs.exists(fileName, function(exists) {
+        if (exists) {
+          play_file(fileName);
+        } else {
+          download_file(id, fileName, url);
+        }
+      });
     }
 
   });

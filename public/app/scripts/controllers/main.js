@@ -48,7 +48,8 @@ angular.module('myApp')
     };
 
     function showFavourites() {
-      $.get(ENV.apiUrl + '/video/favourite', function (data) {
+      var host = ENV.apiUrl || document.location.origin;
+      $.get(host + '/video/favourite', function (data) {
         $scope.$apply(function () {
           $scope.foundItems = data;
         });

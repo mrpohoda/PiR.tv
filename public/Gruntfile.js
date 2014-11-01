@@ -378,8 +378,8 @@ module.exports = function (grunt) {
         constants: {
           ENV: {
             name: 'production',
-            apiUrl: 'http://localhost:8080', // document.location.origin
-            socketUrl: 'http://localhost:8080'
+            apiUrl: '', // document.location.origin
+            socketUrl: ''
           }
         }
       }

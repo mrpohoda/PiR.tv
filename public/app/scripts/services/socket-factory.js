@@ -2,8 +2,8 @@
 
 angular.module('myApp')
   .factory('mySocket', function ($rootScope, ENV) {
-
-    var socket = io.connect(ENV.socketUrl);
+    var host = ENV.socketUrl || document.location.origin;
+    var socket = io.connect(host);
     return {
       on: function (eventName, callback) {
         socket.on(eventName, function () {

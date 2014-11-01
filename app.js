@@ -51,10 +51,6 @@ app.get('/video/favourite', function(req, res) {
   })
 });
 
-app.get('/play/:video_id', function(req, res) {
-
-});
-
 
 //Socket.io Config
 io.set('log level', 1);
@@ -63,7 +59,19 @@ server.listen(app.get('port'), function() {
   console.log('Pirate TV is running on port ' + app.get('port'));
 });
 
-var ss;
+            socketUrl: 'http://localhost:8080'
+          }
+        }
+      },
+      production: {
+        options: {
+          dest: '<%= yeoman.dist %>/scripts/config.js'
+        },
+        constants: {
+          ENV: {
+            name: 'production',
+var ss,
+  nowPlaying;
 
 //Run and pipe shell script output
 function run_shell(cmd, args, cb, end) {
@@ -78,6 +86,13 @@ function run_shell(cmd, args, cb, end) {
 
 //Socket.io Server
 io.sockets.on('connection', function(socket) {
+
+  if (nowPlaying) {
+    socket.emit("video", {
+      action: 'play',
+      video: nowPlaying
+    });
+  }
 
   socket.on("screen", function(data) {
     socket.type = "screen";
@@ -115,13 +130,50 @@ io.sockets.on('connection', function(socket) {
     }
   });
 
-  function play_file(fileName) {
-    omx.start(fileName, function () {
-      socket.emit("finish");
+  function getFileName(video) {
+    return 'video/' + video.id + '.mp4'; // 'video/%(id)s.%(ext)s'
+  }
+
+  function playVideo(video) {
+    nowPlaying = video;
+
+    // socket.emit - send message only to current user
+    // socket.broadcast.emit - send message to all except current user
+    // io.sockets.emit - send message to all
+    io.sockets.emit("video", {
+      action: 'play',
+      video: video
+    });
+    omx.start(getFileName(video), function () {
+      broadcastStop();
     });
   }
 
-  function download_file(id, fileName, url) {
+  function pauseVideo(video) {
+    video.isPaused = !video.isPaused;
+    nowPlaying = video;
+    io.sockets.emit("video", {
+      action: 'pause',
+      video: video
+    });
+    omx.pause();
+  }
+
+  function stopVideo(video) {
+    broadcastStop();
+    omx.quit();
+  }
+
+  function broadcastStop() {
+    nowPlaying = null;
+    io.sockets.emit("video", {
+      action: 'stop'
+    });
+  }
+
+  function download_file(video) {
+    var url = "http://www.youtube.com/watch?v=" + video.id,
+      fileName = getFileName(video);
     var runShell = new run_shell('youtube-dl', ['-o', fileName, '-f', '/18/22', url],
       function(me, buffer) {
         me.stdout += buffer.toString();
@@ -132,28 +184,31 @@ io.sockets.on('connection', function(socket) {
       },
       function() {
         //child = spawn('omxplayer',[id+'.mp4']);
-        play_file(fileName);
+        playVideo(video);
       });
   }
 
   socket.on("video", function(data) {
+    var action = data.action,
+      video = data.video;
 
-    if (data.action === "play") {
-      var id = data.video_id,
-        fileName = 'video/' + id + '.mp4', // 'video/%(id)s.%(ext)s'
-        url = "http://www.youtube.com/watch?v=" + id;
-
-      fs.exists(fileName, function(exists) {
+    if (action === "play") {
+      fs.exists(getFileName(video), function(exists) {
         if (exists) {
-          play_file(fileName);
+          playVideo(video);
         } else {
-          download_file(id, fileName, url);
+          download_file(video);
         }
       });
     }
-    else if (data.action === 'favourite' && data.video) {
+    else if (action === "pause") {
+      pauseVideo(video);
+    }
+    else if (action === "stop") {
+      stopVideo(video);
+    }
+    else if (action === 'favourite' && video) {
       var favouritesRef = firebaseRef.child("favourites");
-      var video = data.video;
       // this $$hashKey is added by Angular and will be resolved when switching from socket.io
       // to some Angular version of lib - it's because of JSON.stringify
       delete video.$$hashKey;

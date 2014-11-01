@@ -1,16 +1,20 @@
 'use strict';
 
 angular.module('myApp')
-  .controller('MainCtrl', function ($scope, $http, youtube, mySocket) {
+  .controller('MainCtrl', function ($rootScope, $scope, $http, $timeout, youtube, mySocket, ENV) {
     $scope.foundItems = [];
     $scope.searchValue = '';
     $scope.nowPlaying;
-    var host = document.location.origin;
+
+    // listen for the event in the relevant $scope
+    $rootScope.$on('showFavourites', function (event, data) {
+      showFavourites();
+    });
 
     $scope.search = function (query) {
       var params = {
         query: query,
-        limit: 30
+        limit: 50
       };
       youtube.getMovies(params).then(function (movies) {
         $scope.foundItems = movies.data;
@@ -18,47 +22,38 @@ angular.module('myApp')
       });
     };
 
+    $scope.isPlaying = function (movie) {
+      return $scope.nowPlaying && movie.id === $scope.nowPlaying.id;
+    }
+
     $scope.play = function (movie) {
-      if ($scope.nowPlaying && movie.id === $scope.nowPlaying.id) {
-        $scope.pause(movie);
-        return;
-      }
-
-      // if there is previous movie still playing, stop it
-      if ($scope.nowPlaying) {
-        $scope.stop($scope.nowPlaying);
-      }
-
-      movie.isPlaying = true;
-      $scope.nowPlaying = movie;
       mySocket.emit('video', {
         action: 'play',
-        video_id: movie.id
+        video: movie
       });
     };
 
     $scope.pause = function (movie) {
-      movie.isPlaying = !movie.isPlaying;
-      $.get(host + '/omx/pause', function (data) {
-        console.log(data);
+      mySocket.emit('video', {
+        action: 'pause',
+        video: movie
       });
     };
 
     $scope.stop = function (movie) {
-      movie.isPlaying = false;
-      $scope.nowPlaying = null;
-      $.get(host + '/omx/quit', function (data) {
-        console.log(data);
+      mySocket.emit('video', {
+        action: 'stop',
+        video: movie
       });
     };
 
-    $scope.showFavourites = function () {
-      $.get(host + '/video/favourite', function (data) {
+    function showFavourites() {
+      $.get(ENV.apiUrl + '/video/favourite', function (data) {
         $scope.$apply(function () {
           $scope.foundItems = data;
         });
       });
-    };
+    }
 
     $scope.addFavourite = function (movie) {
       mySocket.emit('video', {
@@ -73,24 +68,20 @@ angular.module('myApp')
       console.log('loading', data);
     });
 
-    mySocket.on('finish', function (data) {
-      $scope.nowPlaying.isPlaying = false;
-      $scope.nowPlaying = null;
-    });
+    mySocket.on('video', function (data) {
+      var action = data.action,
+        movie = data.video;
 
-    mySocket.on('send:message', function (message) {
-      $scope.messages.push(message);
-    });
+      alert(action);
 
-    mySocket.on('change:name', function (data) {
-      changeName(data.oldName, data.newName);
-    });
-
-    mySocket.on('user:join', function (data) {
-      $scope.messages.push({
-        user: 'chatroom',
-        text: 'User ' + data.name + ' has joined.'
-      });
-      $scope.users.push(data.name);
+      if (action === 'play') {
+        $scope.nowPlaying = movie;
+      }
+      else if (action === 'pause') {
+        $scope.nowPlaying = movie;
+      }
+      else if (action === 'stop') {
+        $scope.nowPlaying = null;
+      }
     });
   });

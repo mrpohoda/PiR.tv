@@ -3,6 +3,7 @@
 angular
   .module('myApp', [
     'ngRoute',
+    'config',
     'myApp.youtube.service'
   ])
   .config(function ($routeProvider) {

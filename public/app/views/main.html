@@ -1,12 +1,12 @@
-<div ng-show="nowPlaying" class="row mb10">
+<div ng-show="nowPlaying.id" class="row mb10">
   Now playing:
   <div>
     <strong>{{nowPlaying.title}}</strong>
     <button type="button"
         class="btn btn-sm"
-        ng-class="nowPlaying.isPlaying ? 'btn-success' : 'btn-primary'"
-        ng-click="nowPlaying.isPlaying ? pause(nowPlaying) : play(nowPlaying)">
-        <span class="glyphicon" ng-class="nowPlaying.isPlaying ? 'glyphicon-pause' : 'glyphicon-play-circle'"></span>
+        ng-class="isPlaying(nowPlaying) ? 'btn-success' : 'btn-primary'"
+        ng-click="nowPlaying.isPaused ? play(nowPlaying) : pause(nowPlaying)">
+        <span class="glyphicon" ng-class="nowPlaying.isPaused ? 'glyphicon-pause' : 'glyphicon-play-circle'"></span>
       </button>
       <button type="button"
         class="btn btn-sm btn-danger"
@@ -40,9 +40,9 @@
     <div>
       <button type="button"
         class="btn"
-        ng-class="item.isPlaying ? 'btn-success' : 'btn-primary'"
-        ng-click="item.isPlaying ? pause(item) : play(item)">
-        <span class="glyphicon" ng-class="item.isPlaying ? 'glyphicon-pause' : 'glyphicon-play-circle'"></span>
+        ng-class="isPlaying(item) ? 'btn-success' : 'btn-primary'"
+        ng-click="isPlaying(item) ? pause(item) : play(item)">
+        <span class="glyphicon" ng-class="isPlaying(item) ? 'glyphicon-pause' : 'glyphicon-play-circle'"></span>
       </button>
       <button type="button"
         class="btn btn-danger"
@@ -63,12 +63,4 @@
     </div>
     <div class="clearfix"></div>
   </div>
-</div>
-
-<div class="favourite">
-  <button ng-click="showFavourites()" class="btn btn-primary">Show favourites</button>
-</div>
-
-<div class="footer">
-  <p>♥ Lenik</p>
 </div>

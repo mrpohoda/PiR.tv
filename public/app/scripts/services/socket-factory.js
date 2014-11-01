@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('myApp')
-  .factory('mySocket', function ($rootScope) {
-    var host = document.location.origin;
-    var socket = io.connect(host);
+  .factory('mySocket', function ($rootScope, ENV) {
+
+    var socket = io.connect(ENV.socketUrl);
     return {
       on: function (eventName, callback) {
         socket.on(eventName, function () {

@@ -361,7 +361,7 @@ module.exports = function (grunt) {
       // Environment targets
       development: {
         options: {
-          dest: '<%= yeoman.app %>/scripts/config.js'
+          dest: '.tmp/scripts/config.js'
         },
         constants: {
           ENV: {

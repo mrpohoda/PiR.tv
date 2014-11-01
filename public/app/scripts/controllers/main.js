@@ -73,8 +73,6 @@ angular.module('myApp')
       var action = data.action,
         movie = data.video;
 
-      alert(action);
-
       if (action === 'play') {
         $scope.nowPlaying = movie;
       }

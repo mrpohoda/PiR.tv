@@ -28,6 +28,22 @@ var firebaseRef = new Firebase("https://pirtv.firebaseio.com/");
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
+
+  var omx = {
+    start: function (videoId, cb) {
+      console.log('omx start');
+      setTimeout(function () {
+        console.log('omx finish');
+        cb();
+      }, 50000);
+    },
+    pause: function () {
+      console.log('omx pause');
+    },
+    quit: function () {
+      console.log('omx stop');
+    }
+  }
 }
 
 //Routes
@@ -83,67 +99,34 @@ io.sockets.on('connection', function(socket) {
     });
   }
 
-  socket.on("screen", function(data) {
-    socket.type = "screen";
-    ss = socket;
-    console.log("Screen ready...");
-  });
-  socket.on("remote", function(data) {
-    socket.type = "remote";
-    console.log("Remote ready...");
-  });
-
-  socket.on("controll", function(data) {
-    console.log(data);
-    if (socket.type === "remote") {
-
-      if (data.action === "tap") {
-        if (ss != undefined) {
-          ss.emit("controlling", {
-            action: "enter"
-          });
-        }
-      } else if (data.action === "swipeLeft") {
-        if (ss != undefined) {
-          ss.emit("controlling", {
-            action: "goLeft"
-          });
-        }
-      } else if (data.action === "swipeRight") {
-        if (ss != undefined) {
-          ss.emit("controlling", {
-            action: "goRight"
-          });
-        }
-      }
-    }
-  });
-
   function getFileName(video) {
     return 'video/' + video.id + '.mp4'; // 'video/%(id)s.%(ext)s'
   }
 
   function playVideo(video) {
-    nowPlaying = video;
+    stopVideo();
 
-    // socket.emit - send message only to current user
-    // socket.broadcast.emit - send message to all except current user
-    // io.sockets.emit - send message to all
-    io.sockets.emit("video", {
-      action: 'play',
-      video: video
-    });
-    omx.start(getFileName(video), function () {
-      broadcastStop();
-    });
+    setTimeout(function () {
+      nowPlaying = video;
+
+      // socket.emit - send message only to current user
+      // socket.broadcast.emit - send message to all except current user
+      // io.sockets.emit - send message to all
+      io.sockets.emit("video", {
+        action: 'play',
+        video: video
+      });
+      omx.start(getFileName(video), function () {
+        broadcastStop();
+      });
+    }, 200);
   }
 
   function pauseVideo(video) {
-    video.isPaused = !video.isPaused;
-    nowPlaying = video;
+    nowPlaying.isPaused = !nowPlaying.isPaused;
     io.sockets.emit("video", {
       action: 'pause',
-      video: video
+      video: nowPlaying
     });
     omx.pause();
   }

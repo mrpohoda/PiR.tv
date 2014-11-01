@@ -17,7 +17,12 @@ angular.module('myApp')
         limit: 50
       };
       youtube.getMovies(params).then(function (movies) {
-        $scope.foundItems = movies.data;
+        if (movies && movies.data) {
+          $scope.foundItems = movies.data;
+        }
+        else {
+          $scope.foundItems = [];
+        }
         $scope.searchValue = '';
       });
     };
@@ -27,6 +32,7 @@ angular.module('myApp')
     }
 
     $scope.play = function (movie) {
+      movie.isLoading = true;
       mySocket.emit('video', {
         action: 'play',
         video: movie

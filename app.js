@@ -59,17 +59,6 @@ server.listen(app.get('port'), function() {
   console.log('Pirate TV is running on port ' + app.get('port'));
 });
 
-            socketUrl: 'http://localhost:8080'
-          }
-        }
-      },
-      production: {
-        options: {
-          dest: '<%= yeoman.dist %>/scripts/config.js'
-        },
-        constants: {
-          ENV: {
-            name: 'production',
 var ss,
   nowPlaying;
 

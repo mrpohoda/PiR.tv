@@ -58,7 +58,6 @@ angular.module('myApp')
     });
 
     mySocket.on('playlist', function (data) {
-      debugger;
       $scope.playlist = data.data;
     });
   });

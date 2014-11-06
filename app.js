@@ -200,6 +200,7 @@ io.sockets.on('connection', function(socket) {
       fs.exists(getFileName(video), function(exists) {
         if (exists) {
           playlist.push(video);
+          broadcastPlaylist();
         } else {
           download_file(video, function () {
               //child = spawn('omxplayer',[id+'.mp4']);

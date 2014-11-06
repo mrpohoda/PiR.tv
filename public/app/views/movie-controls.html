@@ -1,0 +1,29 @@
+<div>
+  <div ng-show="!isLoading">
+    <button type="button"
+      class="btn"
+      ng-class="isPlaying() ? 'btn-success' : 'btn-primary'"
+      ng-click="isPlaying() ? pause() : play()">
+      <span class="glyphicon" ng-class="isPaused() ? 'glyphicon-play-circle' : 'glyphicon-pause'"></span>
+    </button>
+    <button ng-show="isPlaying()" type="button"
+      class="btn btn-danger"
+      ng-click="stop()">
+      <span class="glyphicon glyphicon-stop"></span>
+    </button>
+    <button type="button"
+      class="btn btn-default"
+      ng-click="addToQueue()">
+      <span class="glyphicon glyphicon-time"></span>
+    </button>
+    <button type="button"
+      class="btn btn-info"
+      ng-click="addFavourite()">
+      <span class="glyphicon glyphicon-star-empty"></span>
+    </button>
+  </div>
+  <div ng-show="isLoading">
+    Loading...
+  </div>
+  <div class="clearfix"></div>
+</div>

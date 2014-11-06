@@ -27,32 +27,6 @@ angular.module('myApp')
       });
     };
 
-    $scope.isPlaying = function (movie) {
-      return $scope.nowPlaying && movie.id === $scope.nowPlaying.id;
-    }
-
-    $scope.play = function (movie) {
-      movie.isLoading = true;
-      mySocket.emit('video', {
-        action: 'play',
-        video: movie
-      });
-    };
-
-    $scope.pause = function (movie) {
-      mySocket.emit('video', {
-        action: 'pause',
-        video: movie
-      });
-    };
-
-    $scope.stop = function (movie) {
-      mySocket.emit('video', {
-        action: 'stop',
-        video: movie
-      });
-    };
-
     function showFavourites() {
       var host = ENV.apiUrl || document.location.origin;
       $.get(host + '/video/favourite', function (data) {
@@ -61,13 +35,6 @@ angular.module('myApp')
         });
       });
     }
-
-    $scope.addFavourite = function (movie) {
-      mySocket.emit('video', {
-        action: 'favourite',
-        video: movie
-      });
-    };
 
     // Socket listeners
     // ================
@@ -88,5 +55,10 @@ angular.module('myApp')
       else if (action === 'stop') {
         $scope.nowPlaying = null;
       }
+    });
+
+    mySocket.on('playlist', function (data) {
+      debugger;
+      $scope.playlist = data.data;
     });
   });

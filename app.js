@@ -35,7 +35,7 @@ if ('development' == app.get('env')) {
       setTimeout(function () {
         console.log('omx finish');
         cb();
-      }, 50000);
+      }, 20000);
     },
     pause: function () {
       console.log('omx pause');
@@ -76,7 +76,8 @@ server.listen(app.get('port'), function() {
 });
 
 var ss,
-  nowPlaying;
+  nowPlaying,
+  playlist = [];
 
 //Run and pipe shell script output
 function run_shell(cmd, args, cb, end) {
@@ -118,6 +119,10 @@ io.sockets.on('connection', function(socket) {
       });
       omx.start(getFileName(video), function () {
         broadcastStop();
+        if (playlist.length) {
+          playVideo(playlist.shift());
+          broadcastPlaylist();
+        }
       });
     }, 200);
   }
@@ -143,7 +148,13 @@ io.sockets.on('connection', function(socket) {
     });
   }
 
-  function download_file(video) {
+  function broadcastPlaylist() {
+    io.sockets.emit("playlist", {
+      data: playlist
+    });
+  }
+
+  function download_file(video, cb) {
     var url = "http://www.youtube.com/watch?v=" + video.id,
       fileName = getFileName(video);
     var runShell = new run_shell('youtube-dl', ['-o', fileName, '-f', '/18/22', url],
@@ -153,11 +164,7 @@ io.sockets.on('connection', function(socket) {
           output: me.stdout
         });
         console.log(me.stdout);
-      },
-      function() {
-        //child = spawn('omxplayer',[id+'.mp4']);
-        playVideo(video);
-      });
+      }, cb);
   }
 
   socket.on("video", function(data) {
@@ -169,7 +176,10 @@ io.sockets.on('connection', function(socket) {
         if (exists) {
           playVideo(video);
         } else {
-          download_file(video);
+          download_file(video, function () {
+              //child = spawn('omxplayer',[id+'.mp4']);
+              playVideo(video);
+          });
         }
       });
     }
@@ -186,6 +196,18 @@ io.sockets.on('connection', function(socket) {
       delete video.$$hashKey;
       favouritesRef.child(video.id).set(video);
     }
-
+    else if (action === 'queue' && video) {
+      fs.exists(getFileName(video), function(exists) {
+        if (exists) {
+          playlist.push(video);
+        } else {
+          download_file(video, function () {
+              //child = spawn('omxplayer',[id+'.mp4']);
+              playlist.push(video);
+              broadcastPlaylist();
+          });
+        }
+      });
+    }
   });
 });

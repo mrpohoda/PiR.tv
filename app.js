@@ -99,6 +99,7 @@ io.sockets.on('connection', function(socket) {
       video: nowPlaying
     });
   }
+  broadcastPlaylist();
 
   function getFileName(video) {
     return 'video/' + video.id + '.mp4'; // 'video/%(id)s.%(ext)s'

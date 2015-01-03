@@ -1,14 +1,23 @@
 'use strict';
 
 angular.module('myApp')
-  .controller('MainCtrl', function ($rootScope, $scope, $http, $timeout, youtube, mySocket, ENV) {
+  .controller('MainCtrl', function ($rootScope, $scope, youtube, mySocket) {
     $scope.foundItems = [];
     $scope.searchValue = '';
     $scope.nowPlaying;
 
+    youtube.getFavouriteCategories().then(function (data) {
+      $scope.favouriteCategories = data;
+    });
+
+    youtube.getFavourites().then(function (data) {
+      $scope.favourites = data;
+      $scope.foundItems = data;
+    });
+
     // listen for the event in the relevant $scope
     $rootScope.$on('showFavourites', function (event, data) {
-      showFavourites();
+      showFavourites(data.category);
     });
 
     $scope.search = function (query) {
@@ -27,13 +36,23 @@ angular.module('myApp')
       });
     };
 
-    function showFavourites() {
-      var host = ENV.apiUrl || document.location.origin;
-      $.get(host + '/video/favourite', function (data) {
-        $scope.$apply(function () {
-          $scope.foundItems = data;
+    $scope.playAll = function () {
+      // TODO
+    };
+
+    function showFavourites(category) {
+      if (category === 'All favourites') {
+        $scope.foundItems = $scope.favourites;
+      }
+      else {
+        var items = [];
+        angular.forEach($scope.favourites, function (movie) {
+          if (movie.category === category) {
+            items.push(movie);
+          }
         });
-      });
+        $scope.foundItems = items;
+      }
     }
 
     // Socket listeners

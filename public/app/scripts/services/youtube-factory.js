@@ -3,8 +3,9 @@
 angular.module('myApp.youtube.service', [
   // 'publicApp.config'
 ])
-  .factory('youtube', function ($http) {
+  .factory('youtube', function ($http, $q, ENV) {
     var youtubeFactory = {};
+    var host = ENV.apiUrl || document.location.origin;
 
     var getBaseUrl = function () {
       return 'http://gdata.youtube.com/feeds/api/videos?alt=json';
@@ -21,6 +22,9 @@ angular.module('myApp.youtube.service', [
     function transformYoutubeData (movies) {
       var items = [],
         entry;
+      if (!movies.feed.entry) {
+        return items;
+      }
       for (var i = 0; i < movies.feed.entry.length; i++) {
         entry = movies.feed.entry[i];
 
@@ -40,6 +44,24 @@ angular.module('myApp.youtube.service', [
           return transformYoutubeData(value);
         })
       });
+    };
+
+    youtubeFactory.getFavouriteCategories = function () {
+      return youtubeFactory.getFavourites().then(function (data) {
+        var categories = [],
+          category;
+        angular.forEach(data, function (value, key) {
+          category = value.category;
+          if (category && categories.indexOf(category) < 0) {
+            categories.push(category);
+          }
+        });
+        return categories;
+      });
+    };
+
+    youtubeFactory.getFavourites = function () {
+      return $.get(host + '/video/favourite');
     };
 
     return youtubeFactory;

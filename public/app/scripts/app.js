@@ -3,6 +3,7 @@
 angular
   .module('myApp', [
     'ngRoute',
+    'ui.bootstrap',
     'config',
     'myApp.youtube.service'
   ])

@@ -4,7 +4,8 @@ app.directive('myMovieControls', function (mySocket) {
   return {
     scope: {
       movie: '=',
-      playing: '='
+      playing: '=',
+      favouriteCategories: '='
     },
     restrict: 'E',
     replace: 'true',
@@ -36,12 +37,27 @@ app.directive('myMovieControls', function (mySocket) {
         });
       };
 
-      // add movie to favourites
-      scope.addFavourite = function () {
+      // emit favorite update to the server
+      function emitFavourite(movie, category) {
+        movie.category = category;
         mySocket.emit('video', {
           action: 'favourite',
-          video: scope.movie
+          video: movie
         });
+      }
+
+      // add movie to selected favourites category
+      scope.addFavourite = function (category) {
+        emitFavourite(scope.movie, category);
+      };
+
+      // create new favorite category and add selected movie to it
+      scope.createFavouriteCategory = function () {
+        var category = window.prompt('Enter new category');
+        if (category) {
+          scope.favouriteCategories.push(category);
+          emitFavourite(scope.movie, category);
+        }
       };
 
       // add movie to current playlist

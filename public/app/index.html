@@ -39,8 +39,10 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
-            <li><a data-toggle="collapse" data-target=".navbar-collapse" href="javascript://" ng-click="showFavourites()">Favourites</a></li>
+          <ul class="nav navbar-nav" ng-repeat="category in favouriteCategories">
+            <li>
+              <a href="javascript://" data-toggle="collapse" data-target=".navbar-collapse" ng-click="showFavourites(category)">{{category}}</a>
+            </li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
@@ -63,6 +65,7 @@
     <script src="bower_components/json3/lib/json3.min.js"></script>
     <script src="bower_components/sass-bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="scripts/vendor/ui-bootstrap-0.12.0.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 

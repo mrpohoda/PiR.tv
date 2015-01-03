@@ -32,6 +32,10 @@ body {
   margin-top: 1em;
 }
 
+.dropdown-menu {
+  text-align: left;
+}
+
 /* Main marketing message and sign up button */
 .jumbotron {
     text-align: center;
@@ -54,8 +58,7 @@ body {
 }
 
 .favourite {
-  margin-top: 1em;
-  text-align: center;
+  font-weight: bold !important;
 }
 
 .mb10 {

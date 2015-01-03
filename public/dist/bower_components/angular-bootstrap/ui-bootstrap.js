@@ -2458,9 +2458,9 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
    *     $tooltipProvider.options( { placement: 'left' } );
    *   });
    */
-  this.options = function( value ) {
-    angular.extend( globalOptions, value );
-  };
+	this.options = function( value ) {
+		angular.extend( globalOptions, value );
+	};
 
   /**
    * This allows you to extend the set of trigger mappings available. E.g.:
@@ -3675,7 +3675,7 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
       //we need to propagate user's query so we can higlight matches
       scope.query = undefined;
 
-      //Declare the timeout promise var outside the function scope so that stacked calls can be cancelled later
+      //Declare the timeout promise var outside the function scope so that stacked calls can be cancelled later 
       var timeoutPromise;
 
       var scheduleSearchWithTimeout = function(inputValue) {

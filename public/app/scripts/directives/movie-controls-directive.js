@@ -17,7 +17,15 @@ app.directive('myMovieControls', function ($rootScope, $timeout, mySocket) {
       // want to overhead raspberry with too many downloads at once
       var unbindPlayAll = $rootScope.$on('playAll', function (event, data) {
         $timeout(function () {
-          scope.play();
+          if (scope.index === undefined) {
+            return;
+          }
+          if (scope.index === '0') {
+            scope.play();
+          }
+          else {
+            scope.addToQueue();
+          }
         }, scope.index * 1000 * 3);
       });
 

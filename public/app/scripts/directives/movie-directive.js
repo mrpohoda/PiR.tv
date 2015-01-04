@@ -5,7 +5,8 @@ app.directive('myMovie', function () {
     scope: {
       movie: '=',
       playing: '=',
-      favouriteCategories: '='
+      favouriteCategories: '=',
+      index: "@"
     },
     restrict: 'E',
     replace: 'true',

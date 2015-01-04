@@ -32,10 +32,10 @@
 </div>
 
 <div class="row">
-  <div ng-if="foundItems.length && 0">
+  <div ng-if="foundItems.length">
     <button class="btn btn-success btn-block" ng-click="playAll()">Play all</button>
   </div>
   <div class="movie col-md-6 col-sm-12" ng-repeat="movie in foundItems">
-    <my-movie movie="movie" playing="nowPlaying" favourite-categories="favouriteCategories"></my-movie>
+    <my-movie movie="movie" playing="nowPlaying" favourite-categories="favouriteCategories" index="{{$index}}"></my-movie>
   </div>
 </div>

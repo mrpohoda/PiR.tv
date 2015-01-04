@@ -36,8 +36,12 @@ angular.module('myApp')
       });
     };
 
+    /**
+     * play all videos currently visible
+     * @return {[type]} [description]
+     */
     $scope.playAll = function () {
-      // TODO
+      $rootScope.$broadcast('playAll', {});
     };
 
     function showFavourites(category) {

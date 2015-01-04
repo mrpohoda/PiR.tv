@@ -1,16 +1,32 @@
 var app = angular.module('myApp');
 
-app.directive('myMovieControls', function (mySocket) {
+app.directive('myMovieControls', function ($rootScope, $timeout, mySocket) {
   return {
     scope: {
       movie: '=',
       playing: '=',
-      favouriteCategories: '='
+      favouriteCategories: '=',
+      index: '@'
     },
     restrict: 'E',
     replace: 'true',
     templateUrl: '../../views/movie-controls.html',
     link: function (scope, element, attr) {
+      // listen for playAll event and play this movie
+      // use timeout because there are potentionally more movies and we don't
+      // want to overhead raspberry with too many downloads at once
+      var unbindPlayAll = $rootScope.$on('playAll', function (event, data) {
+        $timeout(function () {
+          scope.play();
+        }, scope.index * 1000 * 3);
+      });
+
+      // when this directive is destroyed, unbind listening to subscribed events
+      // otherwise there would be multiple calls
+      scope.$on('$destroy', function () {
+        unbindPlayAll();
+      });
+
       // play movie
       scope.play = function () {
         // indicate that movie is loading - this flag will be reseted once the movie starts playing

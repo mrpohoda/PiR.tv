@@ -39,10 +39,13 @@ app.directive('myMovieControls', function ($rootScope, $timeout, mySocket) {
       scope.play = function () {
         // indicate that movie is loading - this flag will be reseted once the movie starts playing
         scope.isLoading = true;
-        mySocket.emit('video', {
-          action: 'play',
-          video: scope.movie
-        });
+        // mySocket.emit('video', {
+        //   action: 'play',
+        //   video: scope.movie
+        // });
+        // every song is added to the queue
+        // if it is the first song, it will automatically starts playing
+        scope.addToQueue();
       };
 
       // pause movie

@@ -202,6 +202,12 @@ io.sockets.on('connection', function(socket) {
         if (exists) {
           playlist.push(video);
           broadcastPlaylist();
+          // if this is the first item added to the queue, play it
+          // this is because "play" is not directly called from the frontend but instead
+          // everything is being added to the queue
+          if (playlist.length === 1) {
+            playVideo(playlist[0]);
+          }
         } else {
           download_file(video, function () {
               //child = spawn('omxplayer',[id+'.mp4']);
